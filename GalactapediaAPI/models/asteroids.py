@@ -3,4 +3,4 @@ from django.db import models
 
 
 class Asteroid(models.Model):
-    stellar_object_id = models.ForeignKey("stellarobject", on_delete=models.CASCADE)
+    stellar_object = models.ForeignKey("Stellar_Object", on_delete=models.CASCADE)
