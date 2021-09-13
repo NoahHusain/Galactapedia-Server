@@ -1,0 +1,9 @@
+[
+    {
+        "model": "GalactapediaAPI.star_type",
+        "pk": 1,
+        "fields": {
+            "type": "G2 V"
+        }
+    }
+]

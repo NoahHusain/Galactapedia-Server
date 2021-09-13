@@ -1,0 +1,22 @@
+[
+    {
+        "model": "GalactapediaAPI.star",
+        "pk": 1,
+        "fields": {
+            "star_type": 1,
+            "luminosity": 1.0,
+            "stellar_object": 1
+
+        }
+    },
+    {
+        "model": "GalactapediaAPI.star",
+        "pk": 2,
+        "fields": {
+            "star_type": 1,
+            "luminosity": 0.5002,
+            "stellar_object": 2
+
+        }
+    }
+]
