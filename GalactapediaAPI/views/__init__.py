@@ -1,0 +1,1 @@
+from .stellar_object import StellarObjectView
