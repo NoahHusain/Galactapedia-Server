@@ -1,0 +1,9 @@
+[
+    {
+        "model": "GalactapediaAPI.asteroid",
+        "pk": 1,
+        "fields": {
+            "stellar_object": 3
+        }
+    }
+]

@@ -1,0 +1,12 @@
+[
+    {
+        "model": "GalactapediaAPI.moon",
+        "pk": 1,
+        "fields": {
+            "gravity": 1.62,
+            "planet": 1,
+            "stellar_object": 5,
+            "orbital_period": "27 Days"
+        }
+    }
+]

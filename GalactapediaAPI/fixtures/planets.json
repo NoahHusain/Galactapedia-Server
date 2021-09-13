@@ -1,0 +1,13 @@
+[
+    {
+        "model": "GalactapediaAPI.planet",
+        "pk": 1,
+        "fields": {
+            "gravity": 9.807,
+            "star": 1,
+            "stellar_object": 4,
+            "orbital_period": "365 Days",
+            "is_dwarf": false
+        }
+    }
+]

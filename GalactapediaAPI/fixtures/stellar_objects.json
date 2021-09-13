@@ -1,0 +1,77 @@
+[
+    {
+        "model": "GalactapediaAPI.stellar_object",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "name": "The Sun",
+            "description": "The Sun is the star at the center of the Solar System. It is a nearly perfect sphere of hot plasma, heated to incandescence by nuclear fusion reactions in its core, radiating the energy mainly as visible light, ultraviolet light, and infrared radiation.",
+            "mass": "1.989 × 10^30 kg",
+            "radius": 432690,
+            "image": null,
+            "discovered_on": "0001-01-01",
+            "discovered_by": "Humanity"
+
+        }
+    },
+    {
+        "model": "GalactapediaAPI.stellar_object",
+        "pk": 2,
+        "fields": {
+            "user": 1,
+            "name": "Alpha Centauri B",
+            "description": "Alpha Centauri B, also known as Toliman, is the secondary star of the binary system. It is a main-sequence star of spectral type K1 V, making it more an orange colour than Alpha Centauri A; it has around 90 percent the mass of the Sun and a 14 percent smaller diameter.",
+            "mass": "1.804 × 10^30 kg",
+            "radius": 373310,
+            "image": null,
+            "discovered_on": "1915-01-01",
+            "discovered_by": "Robert Innes"
+
+        }
+    },
+    {
+        "model": "GalactapediaAPI.stellar_object",
+        "pk": 3,
+        "fields": {
+            "user": 1,
+            "name": "4 Vesta",
+            "description": "Vesta is one of the largest objects in the asteroid belt, with a mean diameter of 525 kilometres. It was discovered by the German astronomer Heinrich Wilhelm Matthias Olbers on 29 March 1807 and is named after Vesta, the virgin goddess of home and hearth from Roman mythology.",
+            "mass": "2.589 × 10^20 kg",
+            "radius": 163,
+            "image": null,
+            "discovered_on": "1807-03-29",
+            "discovered_by": "Heinrich Wilhelm Matthias Olbers"
+
+        }
+    },
+    {
+        "model": "GalactapediaAPI.stellar_object",
+        "pk": 4,
+        "fields": {
+            "user": 1,
+            "name": "Earth",
+            "description": "Earth is the third planet from the Sun and the only astronomical object known to harbour and support life. About 29.2% of Earth's surface is land consisting of continents and islands. The remaining 70.8% is covered with water, mostly by oceans, seas, gulfs, and other salt-water bodies, but also by lakes, rivers, and other freshwater, which together constitute the hydrosphere. Much of Earth's polar regions are covered in ice. Earth's outer layer is divided into several rigid tectonic plates that migrate across the surface over many millions of years, while its interior remains active with a solid iron inner core, a liquid outer core that generates Earth's magnetic field, and a convective mantle that drives plate tectonics.",
+            "mass": "5.97237 × 10^24 kg",
+            "radius": 3958,
+            "image": null,
+            "discovered_on": "0001-01-01",
+            "discovered_by": "Humanity"
+
+        }
+    },
+    {
+        "model": "GalactapediaAPI.stellar_object",
+        "pk": 5,
+        "fields": {
+            "user": 1,
+            "name": "The Moon",
+            "description": "The Moon is Earth's only natural satellite. At about one-quarter the diameter of Earth, it is the largest natural satellite in the Solar System relative to the size of its planet, the fifth largest satellite in the Solar System overall, and is larger than any known dwarf planet.",
+            "mass": "7.34767309 × 10^22 kg",
+            "radius": 1079,
+            "image": null,
+            "discovered_on": "0001-01-01",
+            "discovered_by": "Humanity"
+
+        }
+    }
+]
