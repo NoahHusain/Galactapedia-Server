@@ -3,19 +3,19 @@ from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
-from GalactapediaAPI.models import Stellar_Object
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from GalactapediaAPI.models import Stellar_Object
 
 
 class StellarObjectView(ViewSet):
     """Stellar Object View"""
 
     def retrieve(self, request, pk=None):
-        """Handle GET requests for wiki article
+        """Handle GET requests for stellar object
 
         Returns:
-            Response -- JSON serialized wiki article
+            Response -- JSON serialized stellar object
         """
         try:
             stellar_object = Stellar_Object.objects.get(pk=pk)
@@ -25,10 +25,10 @@ class StellarObjectView(ViewSet):
             return HttpResponseServerError(ex)
 
     def list(self, request):
-        """Handle GET requests to get all wiki articles
+        """Handle GET requests to get all stellar object
 
         Returns:
-            Response -- JSON serialized list of wiki articles
+            Response -- JSON serialized list of stellar object
         """
         stellar_objects = Stellar_Object.objects.all()
 
@@ -69,6 +69,24 @@ class StellarObjectView(ViewSet):
         # client that something was wrong with its request data
         except ValidationError as ex:
             return Response({"reason": ex.message}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk=None):
+        """Handle DELETE requests for a single stellar object
+
+        Returns:
+            Response -- 200, 404, or 500 status code
+        """
+        try:
+            stellar_object = Stellar_Object.objects.get(pk=pk)
+            stellar_object.delete()
+
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+        except Stellar_Object.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class StellarObjectSerializer(serializers.ModelSerializer):
     """JSON serializer for wiki articles
