@@ -88,6 +88,28 @@ class StellarObjectView(ViewSet):
         except Exception as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    def update(self, request, pk=None):
+        """Handle PUT requests for a post
+
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+
+        stellar_object = Stellar_Object.objects.get(pk=pk)
+        stellar_object.name = request.data["name"]
+        stellar_object.description = request.data["description"]
+        stellar_object.mass = request.data["mass"]
+        stellar_object.radius = request.data["radius"]
+        stellar_object.image = request.data["image"]
+        stellar_object.discovered_on = request.data["discovered_on"]
+        stellar_object.discovered_by = request.data["discovered_by"]
+
+        stellar_object.save()
+
+        # 204 status code means everything worked but the
+        # server is not sending back any data in the response
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
+
 class StellarObjectSerializer(serializers.ModelSerializer):
     """JSON serializer for wiki articles
 
