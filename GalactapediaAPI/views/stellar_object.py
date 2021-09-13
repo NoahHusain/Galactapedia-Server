@@ -2,8 +2,10 @@
 from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
-from rest_framework import serializers
+from rest_framework import serializers, status
 from GalactapediaAPI.models import Stellar_Object
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 
 class StellarObjectView(ViewSet):
@@ -36,6 +38,37 @@ class StellarObjectView(ViewSet):
         serializer = StellarObjectSerializer(
             stellar_objects, many=True, context={'request': request})
         return Response(serializer.data)
+    
+    def create(self, request):
+        """Handle POST operations
+
+        Returns:
+            Response -- JSON serialized post instance
+        """
+
+        user = User.objects.get(username=request.auth.user)
+
+
+        stellar_object = Stellar_Object()
+        stellar_object.user = user
+        stellar_object.name = request.data["name"]
+        stellar_object.description = request.data["description"]
+        stellar_object.mass = request.data["mass"]
+        stellar_object.radius = request.data["radius"]
+        stellar_object.image = request.data["image"]
+        stellar_object.discovered_on = request.data["discovered_on"]
+        stellar_object.discovered_by = request.data["discovered_by"]
+
+        try:
+            stellar_object.save()
+            serializer = StellarObjectSerializer(stellar_object, context={'request': request})
+            return Response(serializer.data)
+
+        # If anything went wrong, catch the exception and
+        # send a response with a 400 status code to tell the
+        # client that something was wrong with its request data
+        except ValidationError as ex:
+            return Response({"reason": ex.message}, status=status.HTTP_400_BAD_REQUEST)
 
 class StellarObjectSerializer(serializers.ModelSerializer):
     """JSON serializer for wiki articles
