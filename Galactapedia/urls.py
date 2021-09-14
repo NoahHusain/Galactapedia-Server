@@ -13,14 +13,18 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from GalactapediaAPI.views.stars import StarView
 from django.contrib import admin
 from django.conf.urls import include
 from django.urls import path
 from rest_framework import routers
-from GalactapediaAPI.views import StellarObjectView
+from GalactapediaAPI.views import StellarObjectView, StarView, AsteroidView
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'stellarobjects', StellarObjectView, 'stellar_objects')
+router.register(r'stars', StarView, 'stars')
+router.register(r'asteroids', AsteroidView, 'asteroids')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
