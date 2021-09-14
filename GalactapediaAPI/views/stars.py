@@ -1,14 +1,15 @@
 """View module for handling requests about game types"""
+from django.contrib.auth.models import User
 from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from GalactapediaAPI.models import Stellar_Object
+from GalactapediaAPI.models import Star
 
 
-class StellarObjectView(ViewSet):
+class StarView(ViewSet):
     """Stellar Object View"""
 
     def retrieve(self, request, pk=None):
@@ -18,8 +19,8 @@ class StellarObjectView(ViewSet):
             Response -- JSON serialized stellar object
         """
         try:
-            stellar_object = Stellar_Object.objects.get(pk=pk)
-            serializer = StellarObjectSerializer(stellar_object, context={'request': request})
+            star = Star.objects.get(pk=pk)
+            serializer = StarSerializer(star, context={'request': request})
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
@@ -30,13 +31,13 @@ class StellarObjectView(ViewSet):
         Returns:
             Response -- JSON serialized list of stellar object
         """
-        stellar_objects = Stellar_Object.objects.all()
+        stars = Star.objects.all()
 
         # Note the additional `many=True` argument to the
         # serializer. It's needed when you are serializing
         # a list of objects instead of a single object.
-        serializer = StellarObjectSerializer(
-            stellar_objects, many=True, context={'request': request})
+        serializer = StarSerializer(
+            stars, many=True, context={'request': request})
         return Response(serializer.data)
     
     def create(self, request):
@@ -45,23 +46,15 @@ class StellarObjectView(ViewSet):
         Returns:
             Response -- JSON serialized post instance
         """
-
-        user = User.objects.get(username=request.auth.user)
-
-
-        stellar_object = Stellar_Object()
-        stellar_object.user = user
-        stellar_object.name = request.data["name"]
-        stellar_object.description = request.data["description"]
-        stellar_object.mass = request.data["mass"]
-        stellar_object.radius = request.data["radius"]
-        stellar_object.image = request.data["image"]
-        stellar_object.discovered_on = request.data["discovered_on"]
-        stellar_object.discovered_by = request.data["discovered_by"]
+        
+        star = Star()
+        star.star_type = request.data["star_type"]
+        star.luminosity = request.data["luminosity"]
+        star.stellar_object = request.data["stellar_object"]
 
         try:
-            stellar_object.save()
-            serializer = StellarObjectSerializer(stellar_object, context={'request': request})
+            star.save()
+            serializer = StarSerializer(star, context={'request': request})
             return Response(serializer.data)
 
         # If anything went wrong, catch the exception and
@@ -77,12 +70,12 @@ class StellarObjectView(ViewSet):
             Response -- 200, 404, or 500 status code
         """
         try:
-            stellar_object = Stellar_Object.objects.get(pk=pk)
-            stellar_object.delete()
+            star = Star.objects.get(pk=pk)
+            star.delete()
 
             return Response({}, status=status.HTTP_204_NO_CONTENT)
 
-        except Stellar_Object.DoesNotExist as ex:
+        except Star.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
         except Exception as ex:
@@ -95,40 +88,27 @@ class StellarObjectView(ViewSet):
             Response -- Empty body with 204 status code
         """
 
-        stellar_object = Stellar_Object.objects.get(pk=pk)
-        stellar_object.name = request.data["name"]
-        stellar_object.description = request.data["description"]
-        stellar_object.mass = request.data["mass"]
-        stellar_object.radius = request.data["radius"]
-        stellar_object.image = request.data["image"]
-        stellar_object.discovered_on = request.data["discovered_on"]
-        stellar_object.discovered_by = request.data["discovered_by"]
+        star = Star.objects.get(pk=pk)
+        star.star_type = request.data["star_type"]
+        star.luminosity = request.data["luminosity"]
+        star.stellar_object = request.data["stellar_object"]
 
-        stellar_object.save()
+        star.save()
 
         # 204 status code means everything worked but the
         # server is not sending back any data in the response
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
-class UserSerializer(serializers.ModelSerializer):
+
+class StarSerializer(serializers.ModelSerializer):
     """JSON serializer for wiki articles
 
     Arguments:
         serializers
     """
+
     class Meta:
-        model = User
-        fields = ('id', 'username','first_name', 'last_name')
+        model = Star
+        fields = ('id', 'star_type','luminosity', 'stellar_object')
         depth = 1
 
-class StellarObjectSerializer(serializers.ModelSerializer):
-    """JSON serializer for wiki articles
-
-    Arguments:
-        serializers
-    """
-    user = UserSerializer(many=False)
-    class Meta:
-        model = Stellar_Object
-        fields = ('id', 'user', 'name', 'description','mass', 'radius','discovered_on', 'discovered_by')
-        
