@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import serializers, status
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from GalactapediaAPI.models import Star
+from GalactapediaAPI.models import Star, Stellar_Object
 
 
 class StarView(ViewSet):
@@ -99,14 +99,36 @@ class StarView(ViewSet):
         # server is not sending back any data in the response
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
+class UserSerializer(serializers.ModelSerializer):
+    """JSON serializer for wiki articles
 
+    Arguments:
+        serializers
+    """
+    class Meta:
+        model = User
+        fields = ('id', 'username','first_name', 'last_name')
+        depth = 1
+
+class StellarObjectSerializer(serializers.ModelSerializer):
+    """JSON serializer for wiki articles
+
+    Arguments:
+        serializers
+    """
+    user = UserSerializer(many=False)
+    class Meta:
+        model = Stellar_Object
+        fields = ('id', 'user', 'name', 'description','mass', 'radius','discovered_on', 'discovered_by')
+        
+    
 class StarSerializer(serializers.ModelSerializer):
     """JSON serializer for wiki articles
 
     Arguments:
         serializers
     """
-
+    stellar_object = StellarObjectSerializer(many=False)
     class Meta:
         model = Star
         fields = ('id', 'star_type','luminosity', 'stellar_object')
