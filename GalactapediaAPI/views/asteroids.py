@@ -5,7 +5,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
 from django.core.exceptions import ValidationError
-from GalactapediaAPI.models import Asteroid
+from GalactapediaAPI.models import Asteroid, Stellar_Object, stellar_objects
 
 
 class AsteroidView(ViewSet):
@@ -94,6 +94,28 @@ class AsteroidView(ViewSet):
         # server is not sending back any data in the response
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
+class UserSerializer(serializers.ModelSerializer):
+    """JSON serializer for wiki articles
+
+    Arguments:
+        serializers
+    """
+    class Meta:
+        model = User
+        fields = ('id', 'username','first_name', 'last_name')
+        depth = 1
+
+class StellarObjectSerializer(serializers.ModelSerializer):
+    """JSON serializer for wiki articles
+
+    Arguments:
+        serializers
+    """
+    user = UserSerializer(many=False)
+    class Meta:
+        model = Stellar_Object
+        fields = ('id', 'user', 'name', 'description','mass', 'radius','discovered_on', 'discovered_by')
+        
 
 class AsteroidSerializer(serializers.ModelSerializer):
     """JSON serializer for asteroids
@@ -101,7 +123,7 @@ class AsteroidSerializer(serializers.ModelSerializer):
     Arguments:
         serializers
     """
-
+    stellar_object = StellarObjectSerializer(many=False)
     class Meta:
         model = Asteroid
         fields = ('id', 'stellar_object')

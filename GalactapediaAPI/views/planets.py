@@ -5,7 +5,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
 from django.core.exceptions import ValidationError
-from GalactapediaAPI.models import Planet
+from GalactapediaAPI.models import Planet, Stellar_Object
 
 
 class PlanetView(ViewSet):
@@ -103,6 +103,28 @@ class PlanetView(ViewSet):
         # server is not sending back any data in the response
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
+class UserSerializer(serializers.ModelSerializer):
+    """JSON serializer for wiki articles
+
+    Arguments:
+        serializers
+    """
+    class Meta:
+        model = User
+        fields = ('id', 'username','first_name', 'last_name')
+        depth = 1
+
+class StellarObjectSerializer(serializers.ModelSerializer):
+    """JSON serializer for wiki articles
+
+    Arguments:
+        serializers
+    """
+    user = UserSerializer(many=False)
+    class Meta:
+        model = Stellar_Object
+        fields = ('id', 'user', 'name', 'description','mass', 'radius','discovered_on', 'discovered_by')
+        
 
 class PlanetSerializer(serializers.ModelSerializer):
     """JSON serializer for planets
@@ -110,9 +132,9 @@ class PlanetSerializer(serializers.ModelSerializer):
     Arguments:
         serializers
     """
-
+    stellar_object = StellarObjectSerializer(many=False)
     class Meta:
         model = Planet
         fields = ('id', 'gravity', 'star', 'orbital_period', 'is_dwarf', 'stellar_object')
-        depth = 1
+        depth = 2
 
