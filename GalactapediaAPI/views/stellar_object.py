@@ -1,15 +1,19 @@
 """View module for handling requests about game types"""
+from rest_framework.permissions import DjangoModelPermissions
 from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from GalactapediaAPI.models import Stellar_Object
+from GalactapediaAPI.models import Stellar_Object, Star, Planet, Asteroid, Moon, Star_Type, asteroids
 
 
 class StellarObjectView(ViewSet):
     """Stellar Object View"""
+
+    permission_classes = [ DjangoModelPermissions ]
+    queryset = Stellar_Object.objects.none()
 
     def retrieve(self, request, pk=None):
         """Handle GET requests for stellar object
@@ -17,10 +21,32 @@ class StellarObjectView(ViewSet):
         Returns:
             Response -- JSON serialized stellar object
         """
+        res_data = None
+
         try:
             stellar_object = Stellar_Object.objects.get(pk=pk)
-            serializer = StellarObjectSerializer(stellar_object, context={'request': request})
-            return Response(serializer.data)
+            try:
+                res_data = Star.objects.get(stellar_object=stellar_object)
+                res_data = StarSerializer(res_data, context={'request': request})
+            except:
+                pass
+            try:
+                res_data = Planet.objects.get(stellar_object=stellar_object)
+                res_data = PlanetSerializer(res_data, context={'request': request})
+            except:
+                pass
+            try:
+                res_data = Asteroid.objects.get(stellar_object=stellar_object)
+                res_data = AsteroidSerializer(res_data, context={'request': request})
+            except:
+                pass
+            try:
+                res_data = Moon.objects.get(stellar_object=stellar_object)
+                res_data = MoonSerializer(res_data, context={'request': request})
+            except:
+                pass
+
+            return Response(res_data.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
 
@@ -38,16 +64,16 @@ class StellarObjectView(ViewSet):
         serializer = StellarObjectSerializer(
             stellar_objects, many=True, context={'request': request})
         return Response(serializer.data)
-    
+
     def create(self, request):
         """Handle POST operations
 
         Returns:
             Response -- JSON serialized post instance
         """
+        stellar_object_type = request.data["type"]
 
         user = User.objects.get(username=request.auth.user)
-
 
         stellar_object = Stellar_Object()
         stellar_object.user = user
@@ -55,13 +81,53 @@ class StellarObjectView(ViewSet):
         stellar_object.description = request.data["description"]
         stellar_object.mass = request.data["mass"]
         stellar_object.radius = request.data["radius"]
-        stellar_object.image = request.data["image"]
+        # stellar_object.image = request.data["image"]
         stellar_object.discovered_on = request.data["discovered_on"]
         stellar_object.discovered_by = request.data["discovered_by"]
 
         try:
             stellar_object.save()
-            serializer = StellarObjectSerializer(stellar_object, context={'request': request})
+            attached_stellar_object = Stellar_Object.objects.get(name=request.data['name'])
+
+            if stellar_object_type == "Star":
+                star_type = Star_Type()
+                star_type.type = request.data["star_type"]
+                star_type.save()
+                star = Star()
+                star.star_type = Star_Type.objects.get(type=request.data['star_type'])
+                star.stellar_object = attached_stellar_object
+                star.luminosity = request.data["luminosity"]
+                star.save()
+
+                
+                
+            if stellar_object_type == "Planet":
+                planet = Planet()
+                planet.gravity = request.data["gravity"]
+                planet.star_id = request.data["parent_star"]
+                planet.orbital_period = request.data["orbital_period"]
+                planet.is_dwarf = request.data["is_dwarf"]
+                planet.stellar_object = attached_stellar_object
+                planet.save()
+
+            if stellar_object_type == "Moon":
+                moon = Moon()
+                moon.orbital_period = request.data["orbital_period"]
+                moon.gravity = request.data["gravity"]
+                moon.planet_id = request.data["parent_planet"]
+                moon.stellar_object = attached_stellar_object
+                moon.save()
+
+
+            if stellar_object_type == "Asteroid":
+                asteroid = Asteroid()
+                asteroid.stellar_object = attached_stellar_object
+                asteroid.save()
+
+                
+                
+            serializer = StellarObjectSerializer(
+                stellar_object, context={'request': request})
             return Response(serializer.data)
 
         # If anything went wrong, catch the exception and
@@ -110,6 +176,7 @@ class StellarObjectView(ViewSet):
         # server is not sending back any data in the response
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
+
 class UserSerializer(serializers.ModelSerializer):
     """JSON serializer for wiki articles
 
@@ -118,8 +185,9 @@ class UserSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = User
-        fields = ('id', 'username','first_name', 'last_name')
+        fields = ('id', 'username', 'first_name', 'last_name')
         depth = 1
+
 
 class StellarObjectSerializer(serializers.ModelSerializer):
     """JSON serializer for wiki articles
@@ -128,7 +196,56 @@ class StellarObjectSerializer(serializers.ModelSerializer):
         serializers
     """
     user = UserSerializer(many=False)
+
     class Meta:
         model = Stellar_Object
-        fields = ('id', 'user', 'name', 'description','mass', 'radius','discovered_on', 'discovered_by')
-        
+        fields = ('id', 'user', 'name', 'description', 'mass',
+                  'radius', 'discovered_on', 'discovered_by')
+
+class StarSerializer(serializers.ModelSerializer):
+    """JSON serializer for wiki articles
+
+    Arguments:
+        serializers
+    """
+    stellar_object = StellarObjectSerializer(many=False)
+    class Meta:
+        model = Star
+        fields = ('id', 'star_type', 'luminosity', 'stellar_object')
+        depth = 1
+
+class PlanetSerializer(serializers.ModelSerializer):
+    """JSON serializer for planets
+
+    Arguments:
+        serializers
+    """
+    stellar_object = StellarObjectSerializer(many=False)
+    class Meta:
+        model = Planet
+        fields = ('id', 'gravity', 'star', 'orbital_period', 'is_dwarf', 'stellar_object')
+        depth = 2
+
+class MoonSerializer(serializers.ModelSerializer):
+    """JSON serializer for moons
+
+    Arguments:
+        serializers
+    """
+    stellar_object = StellarObjectSerializer(many=False)
+    class Meta:
+        model = Moon
+        fields = ('id', 'gravity', 'planet', 'orbital_period', 'stellar_object')
+        depth = 2
+
+class AsteroidSerializer(serializers.ModelSerializer):
+    """JSON serializer for asteroids
+
+    Arguments:
+        serializers
+    """
+    stellar_object = StellarObjectSerializer(many=False)
+    class Meta:
+        model = Asteroid
+        fields = ('id', 'stellar_object')
+        depth = 1

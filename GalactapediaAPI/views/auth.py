@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate
-from django.contrib.auth.models import User  # pylint:disable=imported-auth-user
+from django.contrib.auth.models import User, Group  # pylint:disable=imported-auth-user
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -55,8 +55,11 @@ def register_user(request):
         last_name=request.data['last_name']
     )
 
+    group_assignment = Group.objects.get(name="Normal Users")
+    group_assignment.user_set.add(new_user)
     # Use the REST Framework's token generator on the new user account
     token = Token.objects.create(user=new_user)
     # Return the token to the client
-    data = {'token': token.key}
+    data = {'token': token.key,
+            'admin': new_user.is_staff}
     return Response(data)

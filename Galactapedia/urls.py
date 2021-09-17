@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.conf.urls import include
 from django.urls import path
 from rest_framework import routers
-from GalactapediaAPI.views import StellarObjectView, StarView, AsteroidView, PlanetView, MoonView, StarTypeView, register_user, login_user
+from GalactapediaAPI.views import StellarObjectView, StarView, AsteroidView, PlanetView, MoonView, StarTypeView, register_user, login_user, UserView
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'stellarobjects', StellarObjectView, 'stellar_objects')
@@ -27,6 +27,8 @@ router.register(r'asteroids', AsteroidView, 'asteroids')
 router.register(r'planets', PlanetView, 'asteroids')
 router.register(r'moons', MoonView, 'moons')
 router.register(r'startypes', StarTypeView, 'star_types')
+router.register(r'users', UserView, 'users')
+
 
 
 

@@ -4,6 +4,6 @@ from django.db import models
 
 class Moon(models.Model):
     gravity = models.FloatField()
-    planet = models.ForeignKey("Planet", on_delete=models.CASCADE)
+    planet = models.ForeignKey("Planet", on_delete=models.CASCADE, null= True, blank= True)
     stellar_object = models.ForeignKey("Stellar_Object", on_delete=models.CASCADE)
     orbital_period = models.CharField(max_length=25)
