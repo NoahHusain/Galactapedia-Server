@@ -90,8 +90,16 @@ class StellarObjectView(ViewSet):
             attached_stellar_object = Stellar_Object.objects.get(name=request.data['name'])
 
             if stellar_object_type == "Star":
-                # star = Star()
-                pass
+                star_type = Star_Type()
+                star_type.type = request.data["star_type"]
+                star_type.save()
+                star = Star()
+                star.star_type = Star_Type.objects.get(type=request.data['star_type'])
+                star.stellar_object = attached_stellar_object
+                star.luminosity = request.data["luminosity"]
+                star.save()
+
+                
                 
             if stellar_object_type == "Planet":
                 planet = Planet()
