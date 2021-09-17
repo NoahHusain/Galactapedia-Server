@@ -166,7 +166,7 @@ class StellarObjectView(ViewSet):
         stellar_object.description = request.data["description"]
         stellar_object.mass = request.data["mass"]
         stellar_object.radius = request.data["radius"]
-        stellar_object.image = request.data["image"]
+        # stellar_object.image = request.data["image"]
         stellar_object.discovered_on = request.data["discovered_on"]
         stellar_object.discovered_by = request.data["discovered_by"]
 
