@@ -1,4 +1,5 @@
 """View module for handling requests about game types"""
+from rest_framework.permissions import DjangoModelPermissions
 from django.contrib.auth.models import User
 from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
@@ -11,6 +12,9 @@ from GalactapediaAPI.models import Star, Stellar_Object
 
 class StarView(ViewSet):
     """Stellar Object View"""
+
+    permission_classes = [ DjangoModelPermissions ]
+    queryset = Star.objects.none()
 
     def retrieve(self, request, pk=None):
         """Handle GET requests for stellar object
