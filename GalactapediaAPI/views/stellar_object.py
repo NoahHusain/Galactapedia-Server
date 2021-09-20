@@ -58,6 +58,14 @@ class StellarObjectView(ViewSet):
         """
         stellar_objects = Stellar_Object.objects.all()
 
+        search_text = self.request.query_params.get('name', None)
+
+        if search_text is not None:
+            stellar_object = Stellar_Object.objects.get(name=search_text)
+            serializer = StellarObjectSerializer(
+            stellar_object, many=False, context={'request': request})
+            return Response(serializer.data)
+
         # Note the additional `many=True` argument to the
         # serializer. It's needed when you are serializing
         # a list of objects instead of a single object.
