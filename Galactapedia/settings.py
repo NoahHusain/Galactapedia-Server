@@ -76,6 +76,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'Galactapedia.urls'
 
+MEDIA_ROOT = 'media'
+MEDIA_URL = '/media/'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
