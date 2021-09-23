@@ -6,7 +6,12 @@ from rest_framework.response import Response
 from rest_framework import serializers, status
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from GalactapediaAPI.models import Stellar_Object, Star, Planet, Asteroid, Moon, Star_Type, asteroids
+from GalactapediaAPI.models import Stellar_Object, Star, Planet, Asteroid, Moon, Star_Type
+from django.core.files.base import ContentFile
+import base64
+import uuid
+
+
 
 
 class StellarObjectView(ViewSet):
@@ -89,7 +94,10 @@ class StellarObjectView(ViewSet):
         stellar_object.description = request.data["description"]
         stellar_object.mass = request.data["mass"]
         stellar_object.radius = request.data["radius"]
-        # stellar_object.image = request.data["image"]
+        format, imgstr = request.data["image_url"].split(';base64,')
+        ext = format.split('/')[-1]
+        data = ContentFile(base64.b64decode(imgstr), name=f'{request.data["name"]}-{uuid.uuid4()}.{ext}')
+        stellar_object.image = data
         stellar_object.discovered_on = request.data["discovered_on"]
         stellar_object.discovered_by = request.data["discovered_by"]
 
@@ -208,7 +216,7 @@ class StellarObjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stellar_Object
         fields = ('id', 'user', 'name', 'description', 'mass',
-                  'radius', 'discovered_on', 'discovered_by')
+                  'radius', 'discovered_on', 'discovered_by', 'image')
 
 class StarSerializer(serializers.ModelSerializer):
     """JSON serializer for wiki articles
